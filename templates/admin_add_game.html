@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Add Game - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 1.5rem;">Add New Game</h1>
+
+    <div class="card">
+        <form action="{{ url_for('admin.add_game') }}" method="POST" style="display: grid; gap: 1rem;">
+            <div>
+                <label for="title">Title *</label><br>
+                <input type="text" id="title" name="title" required style="width: 100%; padding: 0.5rem;">
+            </div>
+
+            <div class="grid grid-3" style="gap: 1rem;">
+                <div>
+                    <label for="genre">Genre</label><br>
+                    <input type="text" id="genre" name="genre" style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div>
+                    <label for="platform">Platform</label><br>
+                    <input type="text" id="platform" name="platform" style="width: 100%; padding: 0.5rem;">
+                </div>
+                <div>
+                    <label for="release_year">Release Year</label><br>
+                    <input type="number" id="release_year" name="release_year" style="width: 100%; padding: 0.5rem;">
+                </div>
+            </div>
+
+            <div>
+                <label for="cover_image_url">Cover Image URL</label><br>
+                <input type="text" id="cover_image_url" name="cover_image_url" style="width: 100%; padding: 0.5rem;">
+            </div>
+
+            <div>
+                <label for="description">Description</label><br>
+                <textarea id="description" name="description" rows="5" style="width: 100%; padding: 0.5rem;"></textarea>
+            </div>
+
+            <div style="margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Add Game</button>
+                <a href="{{ url_for('admin.manage_games') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

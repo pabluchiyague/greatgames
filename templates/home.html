@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Home - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 2rem;">Welcome back, {{ session.username }}!</h1>
+    
+    <!-- Your Recent Activity -->
+    <div class="card">
+        <h2>Your Recent Activity</h2>
+        {% if recent_activity %}
+        <div class="grid grid-4" style="margin-top: 1rem;">
+            {% for activity in recent_activity %}
+            <a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}" style="text-decoration: none;">
+                <div>
+                    {% if activity.cover_image_url %}
+                    <img src="{{ activity.cover_image_url }}" alt="{{ activity.title }}" style="width: 100%; border-radius: 5px;">
+                    {% else %}
+                    <div style="width: 100%; height: 200px; background-color: var(--primary-blue); border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                        🎮
+                    </div>
+                    {% endif %}
+                    <p style="margin-top: 0.5rem; color: var(--light-gray); font-weight: bold;">{{ activity.title }}</p>
+                    <p style="color: var(--secondary-blue); font-size: 0.9rem;">
+                        {{ activity.status.replace('_', ' ').title() }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--secondary-blue); margin-top: 1rem;">
+            You haven't added any games yet. <a href="{{ url_for('games.browse') }}" style="color: var(--accent-color);">Start browsing!</a>
+        </p>
+        {% endif %}
+    </div>
+    
+    <!-- Recommendations -->
+    {% if recommendations %}
+    <div class="card">
+        <h2>Recommended For You</h2>
+        <p style="color: var(--secondary-blue); margin-bottom: 1rem;">Based on games you've completed</p>
+        <div class="grid grid-3" style="margin-top: 1rem;">
+            {% for game in recommendations %}
+            <a href="{{ url_for('games.game_detail', game_id=game.id) }}" style="text-decoration: none; color: inherit;">
+                <div class="game-card">
+                    {% if game.cover_image_url %}
+                    <img src="{{ game.cover_image_url }}" alt="{{ game.title }}">
+                    {% else %}
+                    <div style="width: 100%; height: 300px; background-color: var(--primary-blue); display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                        <span style="font-size: 3rem;">🎮</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="game-card-info">
+                        <h3 class="game-card-title">{{ game.title }}</h3>
+                        <p class="game-card-meta">{{ game.genre }}</p>
+                        <span style="color: #ffd700;">⭐ {{ "%.1f"|format(game.average_rating) }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Friends Activity -->
+    {% if following_activity %}
+    <div class="card">
+        <h2>Friend Activity</h2>
+        <div style="margin-top: 1rem;">
+            {% for activity in following_activity %}
+            <div style="border-bottom: 1px solid var(--primary-blue); padding: 1rem 0; display: flex; gap: 15px; align-items: center;">
+                <div>
+                    <a href="{{ url_for('users.profile', username=activity.username) }}" style="color: var(--accent-color); font-weight: bold;">
+                        {{ activity.username }}
+                    </a>
+                    <span style="color: var(--secondary-blue);">{{ activity.description }}</span>
+                    {% if activity.game_id %}
+                    <a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}" style="color: var(--light-gray);">
+                        {{ activity.title }}
+                    </a>
+                    {% endif %}
+                </div>
+                {% if activity.cover_image_url %}
+                <img src="{{ activity.cover_image_url }}" alt="{{ activity.title }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="card">
+        <h2>Friend Activity</h2>
+        <p style="color: var(--secondary-blue); margin-top: 1rem;">
+            Follow other users to see their activity here. <a href="{{ url_for('users.discover_friends') }}" style="color: var(--accent-color);">Find users to follow!</a>
+        </p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

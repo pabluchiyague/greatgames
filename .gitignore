@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtualenv
+venv/
+
+# SQLite dbs
+var/*.db
+
+# Environment variables / secrets
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# IDE stuff
+.vscode/
+.idea/
+*.swp

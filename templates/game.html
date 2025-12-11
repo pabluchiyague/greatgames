@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.title }} - GreatGames{% endblock %}
+
+{% block content %}
+<div class="game-header" style="background: linear-gradient(rgba(13, 27, 42, 0.8), rgba(13, 27, 42, 0.9)), url('{{ game.cover_image_url }}'); background-size: cover; padding: 60px 20px; margin: -20px -20px 20px;">
+    <div class="container">
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">{{ game.title }}</h1>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center;">
+            <span class="badge">{{ game.platform }}</span>
+            <span class="badge">{{ game.genre }}</span>
+            <span style="font-size: 1.2rem;">⭐ {{ "%.1f"|format(game.average_rating) }}/10</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+        <div>
+            <!-- Game Info -->
+            <div class="card">
+                <h2>About</h2>
+                <p>{{ game.description }}</p>
+                
+                <div style="margin-top: 1.5rem;">
+                    <p><strong>Developer:</strong> {{ game.developer }}</p>
+                    <p><strong>Publisher:</strong> {{ game.publisher }}</p>
+                    <p><strong>Release Year:</strong> {{ game.release_year }}</p>
+                </div>
+                
+                <!-- Tags -->
+                {% if tags %}
+                <div style="margin-top: 1.5rem;">
+                    <h3>Tags</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 0.5rem;">
+                        {% for tag in tags %}
+                        <a href="{{ url_for('games.browse', genre=tag.name) }}" 
+                           style="padding: 0.5rem 1rem; background-color: var(--primary-blue); border-radius: 20px; text-decoration: none; color: var(--light-gray);">
+                            {{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Reviews -->
+            <div class="card">
+                <h2>Reviews</h2>
+                
+                {% if reviews %}
+                    {% for review in reviews %}
+                    <div class="review" style="border-bottom: 1px solid var(--primary-blue); padding: 1rem 0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <strong>
+                                {% if review.is_anonymous %}
+                                    Anonymous
+                                {% else %}
+                                    <a href="{{ url_for('users.profile', username=review.username) }}" style="color: var(--accent-color);">
+                                        {{ review.username }}
+                                    </a>
+                                {% endif %}
+                            </strong>
+                            <span style="color: #ffd700;">★ {{ review.rating }}/10</span>
+                        </div>
+                        {% if review.review_text %}
+                            <p style="color: var(--secondary-blue);">{{ review.review_text }}</p>
+                        {% endif %}
+                        <small style="color: var(--primary-blue);">{{ review.created_at }}</small>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="color: var(--secondary-blue);">No reviews yet. Be the first to review!</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div>
+            {% if session.user_id %}
+            <div class="card">
+                <h3>Add to List</h3>
+                <form method="POST" action="{{ url_for('games.add_to_list', game_id=game.id) }}">
+                    <div class="form-group">
+                        <select name="status" class="form-control">
+                            <option value="wishlist" {% if user_game_status == 'wishlist' %}selected{% endif %}>Wishlist</option>
+                            <option value="currently_playing" {% if user_game_status == 'currently_playing' %}selected{% endif %}>Currently Playing</option>
+                            <option value="completed" {% if user_game_status == 'completed' %}selected{% endif %}>Completed</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        {% if user_game_status %}Update Status{% else %}Add to List{% endif %}
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h3>{% if user_review %}Edit Your Review{% else %}Write a Review{% endif %}</h3>
+                <form method="POST" action="{{ url_for('games.add_review', game_id=game.id) }}">
+				                <div class="form-group rating-input">
+                    <label>Rating:</label>
+                    <div style="display: flex; gap: 5px;">
+                        {% for i in range(1, 11) %}
+                        <span class="star {% if user_review and i <= user_review.rating %}filled{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" value="{{ user_review.rating if user_review else 0 }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="review_text">Your Thoughts</label>
+                    <textarea id="review_text" name="review_text" rows="4" placeholder="Share your opinion...">{{ user_review.review_text if user_review else '' }}</textarea>
+                </div>
+
+                <div class="form-group" style="display: flex; align-items: center;">
+                    <input type="checkbox" id="is_anonymous" name="is_anonymous" {% if user_review and user_review.is_anonymous %}checked{% endif %}>
+                    <label for="is_anonymous" style="margin-left: 0.5rem;">Post anonymously</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Review</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="card">
+                <p style="text-align: center;">Please <a href="{{ url_for('auth.login') }}">log in</a> to add this game to your list or leave a review.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

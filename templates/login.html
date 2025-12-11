@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Login - GreatGames{% endblock %}
+
+{% block content %}
+<div class="auth-container" style="max-width: 400px; margin: 50px auto;">
+    <div class="card">
+        <h2 style="margin-bottom: 1.5rem; text-align: center;">Login to GreatGames</h2>
+        
+        <form method="POST" action="{{ url_for('auth.login') }}">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 1rem; color: var(--secondary-blue);">
+            Don't have an account? 
+            <a href="{{ url_for('auth.register') }}" style="color: var(--accent-color);">Register here</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

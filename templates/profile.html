@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ profile_user.username }} - Profile{% endblock %}
+{% block content %}
+<div class="profile-header">
+    <h1>{{ profile_user.username }}</h1>
+    <p>{{ profile_user.bio or "No bio yet." }}</p>
+
+    {% if current_user and current_user.id != profile_user.id %}
+        <form method="POST" action="{{ url_for('users.follow_user', username=profile_user.username) }}">
+            <button type="submit" class="btn btn-secondary">
+                {% if is_following %}Unfollow{% else %}Follow{% endif %}
+            </button>
+        </form>
+    {% elif current_user and current_user.id == profile_user.id %}
+        <a href="{{ url_for('users.edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
+    {% endif %}
+</div>
+
+<div class="stats-bar">
+    <span>🎮 {{ stats.total_games }} games</span>
+    <span>⭐ {{ stats.reviews }} reviews</span>
+    <span>🕹 Completed: {{ stats.completed }}</span>
+</div>
+
+<h2>Currently Playing</h2>
+<div class="game-list">
+    {% for g in currently_playing %}
+    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
+    {% else %}
+    <p>No games currently being played.</p>
+    {% endfor %}
+</div>
+
+<h2>Wishlist</h2>
+<div class="game-list">
+    {% for g in wishlist %}
+    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
+    {% else %}
+    <p>No games on wishlist.</p>
+    {% endfor %}
+</div>
+
+<h2>Completed</h2>
+<div class="game-list">
+    {% for g in completed %}
+    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
+    {% else %}
+    <p>No completed games yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

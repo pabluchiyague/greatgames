@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Games - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 1.5rem;">Manage Games</h1>
+
+    <form action="{{ url_for('admin.manage_games') }}" method="GET" style="margin-bottom: 1.5rem;">
+        <input
+            type="text"
+            name="q"
+            placeholder="Search by title, genre, or platform..."
+            value="{{ query or '' }}"
+            style="padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--primary-blue); width: 60%; max-width: 400px;"
+        >
+        <button type="submit" class="btn btn-primary" style="margin-left: 0.5rem;">
+            Search
+        </button>
+        <a href="{{ url_for('admin.manage_games') }}" class="btn btn-secondary" style="margin-left: 0.5rem;">
+            Clear
+        </a>
+        <a href="{{ url_for('admin.add_game') }}" class="btn btn-secondary" style="margin-left: 0.5rem;">
+            + Add Game
+        </a>
+    </form>
+
+    <div class="card">
+        {% if games %}
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--primary-blue); text-align: left;">
+                    <th style="padding: 0.5rem 0;">Title</th>
+                    <th style="padding: 0.5rem 0;">Genre</th>
+                    <th style="padding: 0.5rem 0;">Platform</th>
+                    <th style="padding: 0.5rem 0;">Rating</th>
+                    <th style="padding: 0.5rem 0;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr style="border-bottom: 1px solid var(--primary-blue);">
+                    <td style="padding: 0.4rem 0;">
+                        <a href="{{ url_for('games.game_detail', game_id=game.id) }}"
+                           style="color: var(--accent-color); font-weight: bold;">
+                            {{ game.title }}
+                        </a>
+                    </td>
+                    <td style="padding: 0.4rem 0; color: var(--secondary-blue);">
+                        {{ game.genre or '—' }}
+                    </td>
+                    <td style="padding: 0.4rem 0; color: var(--secondary-blue);">
+                        {{ game.platform or '—' }}
+                    </td>
+                    <td style="padding: 0.4rem 0; color: #ffd700;">
+                        {% if game.average_rating %}
+                            ⭐ {{ "%.1f"|format(game.average_rating) }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.4rem 0;">
+                        <a href="{{ url_for('admin.edit_game', game_id=game.id) }}" class="btn btn-secondary" style="margin-right: 0.25rem;">
+                            Edit
+                        </a>
+                        <form action="{{ url_for('admin.delete_game', game_id=game.id) }}"
+                              method="POST"
+                              style="display:inline;"
+                              onsubmit="return confirm('Delete this game? This cannot be undone.');">
+                            <button type="submit" class="btn btn-danger">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p style="color: var(--secondary-blue);">
+            No games found.
+        </p>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+        <a href="{{ url_for('admin.dashboard') }}" style="color: var(--accent-color);">
+            ← Back to admin dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Friends - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 1.5rem;">Your Friends & Followers</h1>
+
+    <div class="grid grid-2" style="gap: 2rem; margin-bottom: 3rem;">
+        <!-- Following -->
+        <div class="card">
+            <h2>Users You Follow</h2>
+            {% if following %}
+                <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+                    {% for user in following %}
+                    <li style="border-bottom: 1px solid var(--primary-blue); padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <a href="{{ url_for('users.profile', username=user.username) }}" style="font-weight: bold; color: var(--accent-color);">
+                                {{ user.username }}
+                            </a>
+                            {% if user.name %}
+                                <div style="color: var(--secondary-blue); font-size: 0.9rem;">
+                                    {{ user.name }}
+                                </div>
+                            {% endif %}
+                            <div style="color: var(--secondary-blue); font-size: 0.85rem; margin-top: 0.25rem;">
+                                🎮 {{ user.game_count }} games in their library
+                            </div>
+                        </div>
+                        <form action="{{ url_for('users.follow_user', username=user.username) }}" method="POST">
+                            <button type="submit" class="btn btn-secondary">
+                                Unfollow
+                            </button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: var(--secondary-blue); margin-top: 1rem;">
+                    You're not following anyone yet.
+                    <a href="{{ url_for('games.browse') }}" style="color: var(--accent-color);">
+                        Discover gamers to follow!
+                    </a>
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Followers -->
+        <div class="card">
+            <h2>Your Followers</h2>
+            {% if followers %}
+                <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+                    {% for user in followers %}
+                    <li style="border-bottom: 1px solid var(--primary-blue); padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <a href="{{ url_for('users.profile', username=user.username) }}" style="font-weight: bold; color: var(--accent-color);">
+                                {{ user.username }}
+                            </a>
+                            {% if user.name %}
+                                <div style="color: var(--secondary-blue); font-size: 0.9rem;">
+                                    {{ user.name }}
+                                </div>
+                            {% endif %}
+                            <div style="color: var(--secondary-blue); font-size: 0.85rem; margin-top: 0.25rem;">
+                                🎮 {{ user.game_count }} games in their library
+                            </div>
+                        </div>
+                        {% if session.username != user.username %}
+						<form action="{{ url_for('users.follow_user', username=user.username) }}" method="POST">
+							<button type="submit" class="btn btn-secondary">
+								{% if user.id in following_ids %}
+									Unfollow
+								{% else %}
+									Follow back
+								{% endif %}
+							</button>
+						</form>
+						{% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="color: var(--secondary-blue); margin-top: 1rem;">
+                    No one is following you yet. Keep playing and reviewing games to get noticed!
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Friend Activity Feed -->
+    <div class="card">
+        <h2>Recent Friend Activity</h2>
+        {% if activity %}
+            <div style="margin-top: 1rem;">
+                {% for act in activity %}
+                <div style="border-bottom: 1px solid var(--primary-blue); padding: 1rem 0; display: flex; gap: 15px; align-items: center;">
+                    {% if act.cover_image_url %}
+                    <img src="{{ act.cover_image_url }}" alt="{{ act.title }}"
+                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                    {% else %}
+                    <div style="width: 60px; height: 60px; border-radius: 5px; background-color: var(--primary-blue); display: flex; align-items: center; justify-content: center;">
+                        🎮
+                    </div>
+                    {% endif %}
+                    <div>
+                        <a href="{{ url_for('users.profile', username=act.username) }}"
+                           style="font-weight: bold; color: var(--accent-color);">
+                            {{ act.username }}
+                        </a>
+                        <span style="color: var(--secondary-blue); margin-left: 0.25rem;">
+                            {{ act.description }}
+                        </span>
+                        {% if act.game_id %}
+                            <a href="{{ url_for('games.game_detail', game_id=act.game_id) }}"
+                               style="color: var(--light-gray); font-weight: bold; margin-left: 0.25rem;">
+                                {{ act.title }}
+                            </a>
+                        {% endif %}
+                        <div style="font-size: 0.8rem; color: var(--secondary-blue); margin-top: 0.25rem;">
+                            {{ act.created_at }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p style="color: var(--secondary-blue); margin-top: 1rem;">
+                No recent activity from your friends yet. Follow more users or wait for them to play and review games.
+            </p>
+        {% endif %}
+		<p style="margin-bottom: 1rem;">
+			Want to find more players to follow?
+			<a href="{{ url_for('users.discover_friends') }}" style="color: var(--accent-color);">
+				Discover users
+			</a>
+		</p>
+    </div>
+</div>
+{% endblock %}

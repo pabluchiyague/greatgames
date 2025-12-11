@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Find Players - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 1.5rem;">Find Other Players</h1>
+    <p style="color: var(--secondary-blue); margin-bottom: 1rem;">
+        Search for users to follow and see their gaming activity in your Friends feed.
+    </p>
+
+    <!-- Search form -->
+    <form action="{{ url_for('users.discover_friends') }}" method="GET" style="margin-bottom: 2rem;">
+        <input 
+            type="text" 
+            name="q" 
+            placeholder="Search by username or name..." 
+            value="{{ query or '' }}" 
+            style="padding: 0.5rem 0.75rem; border-radius: 4px; border: 1px solid var(--primary-blue); width: 60%; max-width: 400px;"
+        >
+        <button type="submit" class="btn btn-primary" style="margin-left: 0.5rem;">
+            Search
+        </button>
+        <a href="{{ url_for('users.discover_friends') }}" class="btn btn-secondary" style="margin-left: 0.5rem;">
+            Clear
+        </a>
+    </form>
+
+    <div class="card">
+        <h2>Results</h2>
+
+        {% if users %}
+        <ul style="list-style: none; padding: 0; margin-top: 1rem;">
+            {% for user in users %}
+            <li style="border-bottom: 1px solid var(--primary-blue); padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="{{ url_for('users.profile', username=user.username) }}"
+                       style="font-weight: bold; color: var(--accent-color);">
+                        {{ user.username }}
+                    </a>
+                    {% if user.name %}
+                    <div style="color: var(--secondary-blue); font-size: 0.9rem;">
+                        {{ user.name }}
+                    </div>
+                    {% endif %}
+                    <div style="color: var(--secondary-blue); font-size: 0.85rem; margin-top: 0.25rem;">
+                        🎮 {{ user.game_count }} games in their library
+                    </div>
+                </div>
+
+                <div>
+                    {% if user.id != session.user_id %}
+                    <form action="{{ url_for('users.follow_user', username=user.username) }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-secondary">
+                            {% if user.id in following_ids %}
+                                Unfollow
+                            {% else %}
+                                Follow
+                            {% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p style="color: var(--secondary-blue); margin-top: 1rem;">
+            {% if query %}
+                No users found matching "<strong>{{ query }}</strong>".
+            {% else %}
+                No other users found yet. Invite some friends to join GreatGames!
+            {% endif %}
+        </p>
+        {% endif %}
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+        <a href="{{ url_for('users.friends') }}" style="color: var(--accent-color);">
+            ← Back to your Friends page
+        </a>
+    </div>
+</div>
+{% endblock %}
