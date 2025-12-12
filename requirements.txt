@@ -1,0 +1,46 @@
+flask==3.0.0
+werkzeug==3.0.1
+python-dotenv==1.0.0
+email-validator==2.1.0
+flask-login==0.6.3
+flask-wtf==1.2.1
+wtforms==3.1.1
+pillow==10.2.0
+```
+
+### 14.3 Update `.gitignore`
+```
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.db
+var/
+
+# Environment
+.env
+.flaskenv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads
+static/uploads/
