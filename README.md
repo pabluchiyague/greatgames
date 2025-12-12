@@ -1,7 +1,7 @@
 # 🎮 GreatGames  
 *A Letterboxd-style social platform for gamers.*
 
-[![Tests](https://github.com/pabluchiyague/greatgames/actions/workflows/test.yml/badge.svg)](https://github.com/pabluchiyague/greatgames/actions/workflows/test.yml)
+[![Tests](https://github.com/pabluchiyague/greatgames/actions/workflows/tests.yml/badge.svg)](https://github.com/pabluchiyague/greatgames/actions/workflows/tests.yml)
 [![Latest Release](https://img.shields.io/github/v/release/pabluchiyague/greatgames)](https://github.com/pabluchiyague/greatgames/releases)
 ![Python Version](https://img.shields.io/badge/python-3.11-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
