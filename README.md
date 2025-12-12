@@ -69,6 +69,7 @@ It is designed to function similarly to Letterboxd, but for video games.
 ## 📦 Installation
 
 ### 1️⃣ Clone the Repository
+
 ```bash
 git clone https://github.com/pabluchiyague/greatgames.git
 cd greatgames
