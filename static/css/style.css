@@ -212,50 +212,43 @@ body {
 
 .game-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
 }
 
-
+/* Game card container */
 .game-card {
-    background-color: var(--secondary-dark);
-    border-radius: 8px;
+    background-color: #1B263B;
+    border-radius: 10px;
     overflow: hidden;
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.game-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
-}
-
+/* Cover frame */
 .game-card-cover {
     width: 100%;
-    aspect-ratio: 2 / 3;
     overflow: hidden;
-    background: #000;
 }
 
+/* THIS is the important part for filling the frame */
 .game-card-cover img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
     display: block;
+    width: 100%;
+    height: 230px;          /* control card height here */
+    object-fit: cover;      /* make image fill frame & crop */
 }
 
+/* Info area */
 .game-card-info {
-    padding: 0.75rem;
+    padding: 0.6rem 0.8rem;
 }
 
 .game-card-title {
     font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 0.3rem;
-    color: var(--light-gray);
+    margin-bottom: 0.2rem;
 }
 
 .game-card-meta {
@@ -382,6 +375,26 @@ body {
     font-size: 0.9rem;
     color: var(--secondary-blue);
 }
+/* Star logic */
+.star-rating {
+  display: inline-flex;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.star-rating .star {
+  font-size: 1.8rem;
+  color: #415A77;          /* base color */
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+
+.star-rating .star.is-active {
+  color: #ffd700;         /* gold for active stars */
+}
+
+.star-rating .star:hover {
+  transform: scale(1.1);
+}
 
 /* Footer */
 footer {
@@ -421,4 +434,92 @@ footer {
     .grid-2, .grid-3, .grid-4 {
         grid-template-columns: 1fr;
     }
+}
+.activity-carousel {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.activity-slides {
+    flex: 1;
+    position: relative;
+}
+
+.activity-slide {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.activity-slide.is-active {
+    display: grid;
+}
+
+.activity-card {
+    background-color: #1B263B;
+    border-radius: 8px;
+    padding: 0.6rem;
+    display: flex;
+    gap: 0.6rem;
+}
+
+.activity-card-image img,
+.activity-card-image .no-cover {
+    width: 60px;
+    height: 60px;
+    border-radius: 6px;
+    object-fit: cover;
+    display: block;
+    background-color: var(--primary-blue);
+    text-align: center;
+    line-height: 60px;
+    font-size: 1.5rem;
+}
+
+.activity-card-body {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.85rem;
+}
+
+.activity-user {
+    color: var(--accent-color);
+    font-weight: bold;
+    text-decoration: none;
+    margin-bottom: 0.2rem;
+}
+
+.activity-text {
+    color: var(--secondary-blue);
+    margin-bottom: 0.2rem;
+}
+
+.activity-text a {
+    color: var(--light-gray);
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.activity-time {
+    color: var(--primary-blue);
+    font-size: 0.75rem;
+}
+
+.carousel-btn {
+    background: none;
+    border: 1px solid var(--primary-blue);
+    border-radius: 999px;
+    width: 32px;
+    height: 32px;
+    color: var(--light-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    background-color: var(--primary-blue);
 }

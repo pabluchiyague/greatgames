@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - GreatGames{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <h1 style="margin-bottom: 1.5rem;">Edit Profile</h1>
+
+    <div class="card">
+        <form method="POST"
+              action="{{ url_for('users.edit_profile') }}"
+              enctype="multipart/form-data"
+              style="display: grid; gap: 1rem;">
+
+            <!-- Avatar preview -->
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                {% set avatar = user.profile_picture or 'images/default_avatar.png' %}
+                <img src="{{ url_for('static', filename=avatar) }}"
+                     alt="Profile picture"
+                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
+                <div>
+                    <label for="profile_picture">Profile picture</label><br>
+                    <input type="file" id="profile_picture" name="profile_picture" accept="image/*">
+                    <p style="font-size: 0.8rem; color: var(--secondary-blue); margin-top: 0.25rem;">
+                        PNG, JPG, or GIF. Square images look best.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Display name</label>
+                <input type="text" id="name" name="name"
+                       value="{{ user.name or '' }}"
+                       style="width: 100%; padding: 0.5rem;">
+            </div>
+
+            <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea id="bio" name="bio" rows="4"
+                          style="width: 100%; padding: 0.5rem;"
+                          placeholder="Tell people what kind of games you love...">{{ user.bio or '' }}</textarea>
+            </div>
+
+            <div style="margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a href="{{ url_for('users.profile', username=user.username) }}"
+                   class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -7,34 +7,34 @@
     <h1 style="margin-bottom: 2rem;">Welcome back, {{ session.username }}!</h1>
     
     <!-- Your Recent Activity -->
-    <div class="card">
-        <h2>Your Recent Activity</h2>
-        {% if recent_activity %}
-        <div class="grid grid-4" style="margin-top: 1rem;">
-            {% for activity in recent_activity %}
-            <a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}" style="text-decoration: none;">
-                <div>
-                    {% if activity.cover_image_url %}
-                    <img src="{{ activity.cover_image_url }}" alt="{{ activity.title }}" style="width: 100%; border-radius: 5px;">
-                    {% else %}
-                    <div style="width: 100%; height: 200px; background-color: var(--primary-blue); border-radius: 5px; display: flex; align-items: center; justify-content: center;">
-                        🎮
-                    </div>
-                    {% endif %}
-                    <p style="margin-top: 0.5rem; color: var(--light-gray); font-weight: bold;">{{ activity.title }}</p>
-                    <p style="color: var(--secondary-blue); font-size: 0.9rem;">
-                        {{ activity.status.replace('_', ' ').title() }}
-                    </p>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p style="color: var(--secondary-blue); margin-top: 1rem;">
-            You haven't added any games yet. <a href="{{ url_for('games.browse') }}" style="color: var(--accent-color);">Start browsing!</a>
-        </p>
-        {% endif %}
-    </div>
+	<div class="card">
+		<h2>Your Recent Activity</h2>
+
+		{% if recent_activity %}
+		<div class="game-grid" style="margin-top: 1rem;">
+			{% for activity in recent_activity %}
+			<a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}" class="game-card">
+
+				<div class="game-card-cover">
+					<img src="{{ activity.cover_image_url or url_for('static', filename='images/default_cover.jpg') }}"
+						 alt="{{ activity.title }}">
+				</div>
+
+				<div class="game-card-info">
+					<h3 class="game-card-title">{{ activity.title }}</h3>
+					<p class="game-card-meta">{{ activity.description }}</p>
+				</div>
+
+			</a>
+			{% endfor %}
+		</div>
+		{% else %}
+		<p style="color: var(--secondary-blue); margin-top: 1rem;">
+			You haven't added any games yet. <a href="{{ url_for('games.browse') }}" style="color: var(--accent-color);">Start browsing!</a>
+		</p>
+		{% endif %}
+	</div>
+
     
     <!-- Recommendations -->
     {% if recommendations %}
@@ -65,38 +65,66 @@
     </div>
     {% endif %}
     
-    <!-- Friends Activity -->
-    {% if following_activity %}
-    <div class="card">
-        <h2>Friend Activity</h2>
-        <div style="margin-top: 1rem;">
-            {% for activity in following_activity %}
-            <div style="border-bottom: 1px solid var(--primary-blue); padding: 1rem 0; display: flex; gap: 15px; align-items: center;">
-                <div>
-                    <a href="{{ url_for('users.profile', username=activity.username) }}" style="color: var(--accent-color); font-weight: bold;">
-                        {{ activity.username }}
-                    </a>
-                    <span style="color: var(--secondary-blue);">{{ activity.description }}</span>
-                    {% if activity.game_id %}
-                    <a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}" style="color: var(--light-gray);">
-                        {{ activity.title }}
-                    </a>
-                    {% endif %}
-                </div>
-                {% if activity.cover_image_url %}
-                <img src="{{ activity.cover_image_url }}" alt="{{ activity.title }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
+	    <!-- Friends Activity -->
+		{% if following_activity %}
+		<div class="card">
+			<h2>Friend Activity</h2>
+
+			<div class="activity-carousel">
+				<button class="carousel-btn carousel-prev" type="button">‹</button>
+
+				<div class="activity-slides">
+					{# group into slides of 4 #}
+					{% for activity in following_activity %}
+						{% if loop.index0 % 6 == 0 %}
+						<div class="activity-slide {% if loop.index0 == 0 %}is-active{% endif %}">
+						{% endif %}
+
+							<div class="activity-card">
+								<div class="activity-card-image">
+									{% if activity.cover_image_url %}
+									<img src="{{ activity.cover_image_url }}"
+										 alt="{{ activity.title }}">
+									{% else %}
+									<div class="no-cover">🎮</div>
+									{% endif %}
+								</div>
+								<div class="activity-card-body">
+									<a href="{{ url_for('users.profile', username=activity.username) }}"
+									   class="activity-user">
+										{{ activity.username }}
+									</a>
+									<div class="activity-text">
+										{{ activity.description }}
+										{% if activity.game_id %}
+										<a href="{{ url_for('games.game_detail', game_id=activity.game_id) }}">
+											{{ activity.title }}
+										</a>
+										{% endif %}
+									</div>
+									<div class="activity-time">
+										{{ activity.created_at }}
+									</div>
+								</div>
+							</div>
+
+						{% if loop.index0 % 6 == 5 or loop.last %}
+						</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+
+				<button class="carousel-btn carousel-next" type="button">›</button>
+			</div>
+		</div>
+		{% else %}
+		<div class="card">
+			<h2>Friend Activity</h2>
+			<p style="color: var(--secondary-blue); margin-top: 1rem;">
+				Follow other users to see their activity here. <a href="{{ url_for('users.discover_friends') }}" style="color: var(--accent-color);">Find users to follow!</a>
+			</p>
+		</div>
+		{% endif %}
+
     </div>
-    {% else %}
-    <div class="card">
-        <h2>Friend Activity</h2>
-        <p style="color: var(--secondary-blue); margin-top: 1rem;">
-            Follow other users to see their activity here. <a href="{{ url_for('users.discover_friends') }}" style="color: var(--accent-color);">Find users to follow!</a>
-        </p>
-    </div>
-    {% endif %}
-</div>
 {% endblock %}

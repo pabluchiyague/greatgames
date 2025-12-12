@@ -1,8 +1,15 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, current_app
 from modules.auth import login_required
-from db import get_db
+from app import get_db
+import os
+from werkzeug.utils import secure_filename
 
 users_bp = Blueprint('users', __name__)
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename: str) -> bool:
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @users_bp.route('/profile/<username>')
 def profile(username):
@@ -84,25 +91,56 @@ def profile(username):
 @login_required
 def edit_profile():
     db = get_db()
-    
+
     if request.method == 'POST':
-        name = request.form.get('name')
-        bio = request.form.get('bio')
-        
-        db.execute(
-            'UPDATE users SET name = ?, bio = ? WHERE id = ?',
-            (name, bio, session['user_id'])
-        )
+        name = request.form.get('name') or None
+        bio = request.form.get('bio') or None
+        file = request.files.get('profile_picture')
+
+        profile_picture_path = None
+
+        if file and file.filename:
+            if not allowed_file(file.filename):
+                flash('Invalid image type. Please upload a PNG, JPG, or GIF.', 'danger')
+                return redirect(url_for('users.edit_profile'))
+
+            filename = secure_filename(file.filename)
+            ext = filename.rsplit('.', 1)[1].lower()
+
+            # Give each user a stable filename
+            filename = f"user_{session['user_id']}.{ext}"
+
+            upload_folder = current_app.config['UPLOAD_FOLDER']
+            os.makedirs(upload_folder, exist_ok=True)
+
+            full_path = os.path.join(upload_folder, filename)
+            file.save(full_path)
+
+            # Store path relative to /static so we can use url_for('static', ...)
+            profile_picture_path = f"uploads/{filename}"
+
+        if profile_picture_path:
+            db.execute(
+                'UPDATE users SET name = ?, bio = ?, profile_picture = ? WHERE id = ?',
+                (name, bio, profile_picture_path, session['user_id'])
+            )
+        else:
+            db.execute(
+                'UPDATE users SET name = ?, bio = ? WHERE id = ?',
+                (name, bio, session['user_id'])
+            )
+
         db.commit()
-        
+
         flash('Profile updated successfully!', 'success')
         return redirect(url_for('users.profile', username=session['username']))
-    
+
     user = db.execute(
         'SELECT * FROM users WHERE id = ?', (session['user_id'],)
     ).fetchone()
-    
+
     return render_template('edit_profile.html', user=user)
+
 
 @users_bp.route('/follow/<username>', methods=['POST'])
 @login_required

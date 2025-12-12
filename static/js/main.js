@@ -119,3 +119,83 @@ function makeRequest(url, method = 'GET', data = null) {
     .then(response => response.json())
     .catch(error => console.error('Error:', error));
 }
+document.addEventListener('DOMContentLoaded', function () {
+  const ratingContainers = document.querySelectorAll('.star-rating');
+
+  ratingContainers.forEach(container => {
+    const stars = container.querySelectorAll('.star');
+    const form = container.closest('form');
+    const input = form ? form.querySelector('input[name="rating"]') : null;
+
+    // Initial selected rating
+    let selected = 0;
+    if (container.dataset.currentRating) {
+      selected = Number(container.dataset.currentRating) || 0;
+    } else if (input && input.value) {
+      selected = Number(input.value) || 0;
+    }
+
+    function paint(rating) {
+      stars.forEach(star => {
+        const v = Number(star.dataset.value);
+        star.classList.toggle('is-active', v <= rating);
+      });
+    }
+
+    paint(selected);
+
+    stars.forEach(star => {
+      const value = Number(star.dataset.value);
+
+      star.addEventListener('mouseenter', () => {
+        paint(value);
+      });
+
+      star.addEventListener('click', () => {
+        selected = value;
+        if (input) input.value = value;
+        paint(selected);
+      });
+    });
+
+    container.addEventListener('mouseleave', () => {
+      paint(selected);
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+
+  document.querySelectorAll('.activity-carousel').forEach(carousel => {
+    const slides = carousel.querySelectorAll('.activity-slide');
+    if (!slides.length) return;
+
+    let current = 0;
+
+    function showSlide(index) {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === index);
+      });
+    }
+
+    const prevBtn = carousel.querySelector('.carousel-prev');
+    const nextBtn = carousel.querySelector('.carousel-next');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        current = (current - 1 + slides.length) % slides.length;
+        showSlide(current);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+      });
+    }
+
+    // Ensure initial slide is visible
+    showSlide(current);
+  });
+});

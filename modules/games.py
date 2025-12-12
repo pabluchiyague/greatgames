@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from modules.auth import login_required
-from db import get_db
+from app import get_db, log_activity
+
 
 games_bp = Blueprint('games', __name__)
 
@@ -87,6 +88,16 @@ def add_to_list(game_id):
         )
     
     db.commit()
+
+    # Log activity
+    status_readable = status.replace('_', ' ').title()
+    description = f"added to {status_readable}: "
+    log_activity(
+        user_id=session['user_id'],
+        activity_type='list_update',
+        game_id=game_id,
+        description=description
+    )
     flash(f'Game added to {status.replace("_", " ")}!', 'success')
     return redirect(url_for('games.game_detail', game_id=game_id))
 
@@ -135,6 +146,15 @@ def add_review(game_id):
     )
     
     db.commit()
+    
+        # Log review activity
+    log_activity(
+        user_id=session['user_id'],
+        activity_type='review',
+        game_id=game_id,
+        description='reviewed '
+    )
+    
     flash('Review submitted successfully!', 'success')
     return redirect(url_for('games.game_detail', game_id=game_id))
 

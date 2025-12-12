@@ -1,51 +1,132 @@
 {% extends "base.html" %}
 {% block title %}{{ profile_user.username }} - Profile{% endblock %}
+
 {% block content %}
-<div class="profile-header">
-    <h1>{{ profile_user.username }}</h1>
-    <p>{{ profile_user.bio or "No bio yet." }}</p>
+<div class="home-container">
 
-    {% if current_user and current_user.id != profile_user.id %}
-        <form method="POST" action="{{ url_for('users.follow_user', username=profile_user.username) }}">
-            <button type="submit" class="btn btn-secondary">
-                {% if is_following %}Unfollow{% else %}Follow{% endif %}
-            </button>
-        </form>
-    {% elif current_user and current_user.id == profile_user.id %}
-        <a href="{{ url_for('users.edit_profile') }}" class="btn btn-secondary">Edit Profile</a>
-    {% endif %}
-</div>
+    <!-- Header / Avatar / Stats -->
+    <div class="card" style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap;">
+        {% set avatar = profile_user.profile_picture or 'images/default_avatar.png' %}
+        <img src="{{ url_for('static', filename=avatar) }}"
+             alt="{{ profile_user.username }} avatar"
+             style="width: 96px; height: 96px; border-radius: 50%; object-fit: cover;">
 
-<div class="stats-bar">
-    <span>🎮 {{ stats.total_games }} games</span>
-    <span>⭐ {{ stats.reviews }} reviews</span>
-    <span>🕹 Completed: {{ stats.completed }}</span>
-</div>
+        <div style="flex: 1;">
+            <h1 style="margin-bottom: 0.25rem;">
+                {{ profile_user.username }}
+            </h1>
+            {% if profile_user.name %}
+            <p style="color: var(--secondary-blue); margin-bottom: 0.5rem;">
+                {{ profile_user.name }}
+            </p>
+            {% endif %}
+            <p style="color: var(--secondary-blue); max-width: 500px;">
+                {{ profile_user.bio or "No bio yet." }}
+            </p>
 
-<h2>Currently Playing</h2>
-<div class="game-list">
-    {% for g in currently_playing %}
-    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
-    {% else %}
-    <p>No games currently being played.</p>
-    {% endfor %}
-</div>
+            <div class="stats-bar" style="margin-top: 0.75rem; display: flex; gap: 1.5rem; flex-wrap: wrap; color: var(--secondary-blue);">
+                <span>🎮 {{ stats.total_games }} games</span>
+                <span>⭐ {{ stats.reviews }} reviews</span>
+                <span>🕹 Completed: {{ stats.completed }}</span>
+                <span>📌 Wishlist: {{ stats.wishlist }}</span>
+            </div>
+        </div>
 
-<h2>Wishlist</h2>
-<div class="game-list">
-    {% for g in wishlist %}
-    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
-    {% else %}
-    <p>No games on wishlist.</p>
-    {% endfor %}
-</div>
+        <div>
+            {% if current_user and current_user.id != profile_user.id %}
+                <form method="POST" action="{{ url_for('users.follow_user', username=profile_user.username) }}">
+                    <button type="submit" class="btn btn-secondary">
+                        {% if is_following %}Unfollow{% else %}Follow{% endif %}
+                    </button>
+                </form>
+            {% elif current_user and current_user.id == profile_user.id %}
+                <a href="{{ url_for('users.edit_profile') }}" class="btn btn-secondary">
+                    Edit Profile
+                </a>
+            {% endif %}
+        </div>
+    </div>
 
-<h2>Completed</h2>
-<div class="game-list">
-    {% for g in completed %}
-    <a href="{{ url_for('games.game_detail', game_id=g.id) }}">{{ g.title }}</a>
-    {% else %}
-    <p>No completed games yet.</p>
-    {% endfor %}
+    <!-- Currently Playing -->
+    <div style="margin-bottom: 2rem;">
+        <h2>Currently Playing</h2>
+        {% if currently_playing %}
+        <div class="game-grid" style="margin-top: 1rem;">
+            {% for game in currently_playing %}
+            <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-card">
+                <div class="game-card-cover">
+                    <img src="{{ game.cover_image_url or url_for('static', filename='images/default_cover.jpg') }}"
+                         alt="{{ game.title }}">
+                </div>
+                <div class="game-card-info">
+                    <h3 class="game-card-title">{{ game.title }}</h3>
+                    <p class="game-card-meta">
+                        {{ game.genre }} | ⭐ {{ "%.1f"|format(game.average_rating) }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--secondary-blue); margin-top: 0.5rem;">
+            No games currently being played.
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Wishlist -->
+    <div style="margin-bottom: 2rem;">
+        <h2>Wishlist</h2>
+        {% if wishlist %}
+        <div class="game-grid" style="margin-top: 1rem;">
+            {% for game in wishlist %}
+            <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-card">
+                <div class="game-card-cover">
+                    <img src="{{ game.cover_image_url or url_for('static', filename='images/default_cover.jpg') }}"
+                         alt="{{ game.title }}">
+                </div>
+                <div class="game-card-info">
+                    <h3 class="game-card-title">{{ game.title }}</h3>
+                    <p class="game-card-meta">
+                        {{ game.genre }} | ⭐ {{ "%.1f"|format(game.average_rating) }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--secondary-blue); margin-top: 0.5rem;">
+            No games on wishlist.
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Completed -->
+    <div style="margin-bottom: 2rem;">
+        <h2>Completed</h2>
+        {% if completed %}
+        <div class="game-grid" style="margin-top: 1rem;">
+            {% for game in completed %}
+            <a href="{{ url_for('games.game_detail', game_id=game.id) }}" class="game-card">
+                <div class="game-card-cover">
+                    <img src="{{ game.cover_image_url or url_for('static', filename='images/default_cover.jpg') }}"
+                         alt="{{ game.title }}">
+                </div>
+                <div class="game-card-info">
+                    <h3 class="game-card-title">{{ game.title }}</h3>
+                    <p class="game-card-meta">
+                        {{ game.genre }} | ⭐ {{ "%.1f"|format(game.average_rating) }}
+                    </p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: var(--secondary-blue); margin-top: 0.5rem;">
+            No completed games yet.
+        </p>
+        {% endif %}
+    </div>
+
 </div>
 {% endblock %}

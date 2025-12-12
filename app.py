@@ -2,6 +2,20 @@ from flask import Flask, g, render_template, session, redirect, url_for
 import sqlite3
 from config import Config
 import os
+
+def log_activity(user_id, activity_type, game_id=None, description=None):
+    """
+    Helper to insert a row into the activities table.
+    activity_type: e.g. 'list_update', 'review'
+    description: short text like 'added to wishlist ' – the game title is joined in the query.
+    """
+    db = get_db()
+    db.execute(
+        'INSERT INTO activities (user_id, activity_type, game_id, description) VALUES (?, ?, ?, ?)',
+        (user_id, activity_type, game_id, description)
+    )
+    db.commit()
+
 from db import get_db, query_db
 from modules.auth import login_required
 from modules.admin import admin_bp
