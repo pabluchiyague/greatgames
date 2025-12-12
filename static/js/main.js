@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Search suggestions (optional enhancement)
+    // Search suggestions -- not working yet
     const searchInput = document.querySelector('.nav-search input[name="q"]');
     
     if (searchInput) {
@@ -83,14 +83,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (query.length < 2) return;
             
             timeout = setTimeout(() => {
-                // Here you could make an AJAX call to get search suggestions
-                // For now, we'll skip this advanced feature
                 console.log('Searching for:', query);
             }, 300);
         });
     }
     
-    // Image lazy loading
+    // Image loading
     const images = document.querySelectorAll('img[data-src]');
     
     const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -119,6 +117,7 @@ function makeRequest(url, method = 'GET', data = null) {
     .then(response => response.json())
     .catch(error => console.error('Error:', error));
 }
+//stars colour logic
 document.addEventListener('DOMContentLoaded', function () {
   const ratingContainers = document.querySelectorAll('.star-rating');
 
@@ -163,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 });
-
+//carousel
 document.addEventListener('DOMContentLoaded', function () {
 
   document.querySelectorAll('.activity-carousel').forEach(carousel => {
@@ -180,14 +179,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const prevBtn = carousel.querySelector('.carousel-prev');
     const nextBtn = carousel.querySelector('.carousel-next');
-
+	//move backwards
     if (prevBtn) {
       prevBtn.addEventListener('click', () => {
         current = (current - 1 + slides.length) % slides.length;
         showSlide(current);
       });
     }
-
+	//move to next
     if (nextBtn) {
       nextBtn.addEventListener('click', () => {
         current = (current + 1) % slides.length;

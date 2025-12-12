@@ -14,7 +14,7 @@
 
             <!-- Avatar preview -->
             <div style="display: flex; gap: 1rem; align-items: center;">
-                {% set avatar = user.profile_picture or 'images/default_avatar.png' %}
+                {% set avatar = user.profile_picture or 'static/uploads/default_avatar.png' %}
                 <img src="{{ url_for('static', filename=avatar) }}"
                      alt="Profile picture"
                      style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">

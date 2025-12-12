@@ -24,7 +24,7 @@ def profile(username):
         flash('User not found.', 'danger')
         return redirect(url_for('index'))
     
-    # Get user's games by status
+    # Get users games by status
     wishlist = db.execute('''
         SELECT g.*, ug.added_at 
         FROM games g
@@ -219,7 +219,7 @@ def friends():
         LIMIT 20
     ''', (session['user_id'],)).fetchall()
 
-    # Add this: the IDs of users you follow
+
     following_ids = {u['id'] for u in following}
 
     return render_template(
@@ -236,14 +236,14 @@ def discover_friends():
 
     q = request.args.get('q', '').strip()
 
-    # Get IDs of users you already follow (for button state)
+    # Get IDs of users you already follow (for button)
     following_rows = db.execute(
         'SELECT following_id FROM follows WHERE follower_id = ?',
         (session['user_id'],)
     ).fetchall()
     following_ids = {row['following_id'] for row in following_rows}
 
-    # Build base query: exclude yourself
+    # Build base query: exclude user
     params = [session['user_id']]
     where_clauses = ['u.id != ?']
 

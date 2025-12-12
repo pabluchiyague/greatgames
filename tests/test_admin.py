@@ -1,9 +1,9 @@
 def test_admin_requires_admin(client, auth):
-    # Logged out user → redirect
+    # Logged out user - redirect
     resp = client.get("/admin", follow_redirects=False)
     assert resp.status_code == 302
 
-    # Normal user → should also be blocked (redirect or 403)
+    # Normal user - should also be blocked (redirect or 403)
     auth.login(username="user1", password="password123")
     resp = client.get("/admin", follow_redirects=False)
     assert resp.status_code in (302, 403)

@@ -84,7 +84,8 @@ def index():
                          recent_reviews=recent_reviews)
 
 @app.route('/home')
-@login_required  # ADD THIS DECORATOR
+# Ensure a user is logged in
+@login_required 
 def home():
     """Logged-in home page with personalized content"""
     db = get_db()

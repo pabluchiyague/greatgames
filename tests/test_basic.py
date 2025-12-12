@@ -12,8 +12,7 @@ def test_home_requires_login(client):
     The logged-in home/dashboard should redirect if not logged in.
     """
     resp = client.get("/home", follow_redirects=False)
-    # If your home route is '/', you can remove this test.
-    if resp.status_code != 404:  # don't fail if /home doesn't exist at all
+    if resp.status_code != 404:
         assert resp.status_code == 302
 
 

@@ -6,7 +6,6 @@ def test_friends_requires_login(client):
 
     assert resp.status_code == 302
     location = resp.headers.get("Location", "")
-    # your app redirects to /login (not /auth/login)
     assert "/login" in location
 
 
@@ -26,12 +25,11 @@ def test_friends_logged_in(client, auth):
     When logged in, /friends should be accessible and render friend activity
     or the empty/follow prompt if there is no data yet.
     """
-    auth.login()  # logs in as normal user from fixture
+    auth.login()  # logs in as normal user
 
     resp = client.get("/friends")
     assert resp.status_code == 200
 
-    # Depending on seed data, either activity or "no activity yet" message
     assert (
         b"Friend Activity" in resp.data
         or b"Follow other users to see their activity here" in resp.data

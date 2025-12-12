@@ -1,4 +1,4 @@
-/* Color Scheme from your document */
+/*colour scheme */
 :root {
     --primary-dark: #0D1B2A;
     --secondary-dark: #1B263B;
@@ -233,12 +233,11 @@ body {
     overflow: hidden;
 }
 
-/* THIS is the important part for filling the frame */
 .game-card-cover img {
     display: block;
     width: 100%;
-    height: 230px;          /* control card height here */
-    object-fit: cover;      /* make image fill frame & crop */
+    height: 230px;          
+    object-fit: cover;      
 }
 
 /* Info area */

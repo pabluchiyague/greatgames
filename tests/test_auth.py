@@ -1,7 +1,6 @@
 def test_login_success(client, auth):
     resp = auth.login(username="user1", password="password123")
     assert resp.status_code == 200
-    # Should see welcome message or username somewhere
     assert b"user1" in resp.data
 
 
